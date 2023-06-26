@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasMany(models.Post, {
-        sourceKey: 'userId',
+        sourceKey: 'id',
         foreignKey: 'userId',
       });
 
       this.hasMany(models.Comment, {
-        sourceKey: 'userId',
+        sourceKey: 'id',
         foreignKey: 'userId',
       });
     }
