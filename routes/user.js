@@ -92,22 +92,26 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ where: { email } });
   const compareHash = await bcrypt.compare(password, user.password); // 암호화된 비밀번호와 입력 받은 password 비교하여 맞다면 true.
-
-  if (!(email || password)) {
+  if (!user.email) {
+    return res
+      .status(200)
+      .json({ errorMessage: '이메일이 존재하지 않습니다.' });
+  }
+  if (!(email && password)) {
     return res
       .status(400)
       .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
   }
   try {
-    if (compareHash || email === user.email) {
+    if (compareHash) {
       const token = jwt.sign(
         {
           userId: user.id,
         },
         'customized_secret_key'
       );
-      res.cookie("authorization", `Bearer ${token}`);
-      return res.status(200).json({ "token": token }); //
+      res.cookie('authorization', `Bearer ${token}`);
+      return res.status(200).json({ token: token }); //
     } else {
       return res
         .status(400)
