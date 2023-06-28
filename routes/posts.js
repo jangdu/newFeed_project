@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Posts } = require('../models/post.js');
+const { Post } = require('../models');
 const { Op } = require('sequelize');
 // const authMiddleware = require('../middlewares/auth-middleware.js');
 //import * as tweetController from '../controller/tweet.js';
@@ -14,7 +14,7 @@ const { Op } = require('sequelize');
 // 게시글 전체 조회
 router.get('/', async (req, res) => {
   try {
-    const posts = await Posts.findAll({
+    const posts = await Post.findAll({
       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
     });
 
@@ -29,10 +29,13 @@ router.get('/', async (req, res) => {
 // 게시글 상세 조회
 router.get('/:postId', async (req, res) => {
   const { postId } = req.params;
+
+  // 일치하지 않는 id:postId는 id를 재확인해달라는 에러 리턴 추가 필요
+
   try {
-    const post = await Posts.findOne({
+    const post = await Post.findOne({
       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
-      where: { postId },
+      where: { id: postId },
     });
 
     return res.status(200).json({ data: post });
@@ -47,8 +50,9 @@ router.get('/:postId', async (req, res) => {
 router.post('/', async (req, res) => {
   // const { userId, password } = res.locals.user; authMiddleware 적용 이후 사용 예정
   // const { title, content } = req.body; authMiddleware 적용 이후 사용 예정
-  const { title, content, password } = req.body; // authMiddleware 적용 이후 삭제 예정
-  const post = await Posts.create({ title, content, password });
+  const { title, content, userId } = req.body; // authMiddleware 적용 이후 삭제 예정
+  console.log(Post);
+  const post = await Post.create({ title, content, userId });
 
   // # 403 Cookie가 존재하지 않을 경우
   // {"errorMessage": "로그인이 필요한 기능입니다."}
@@ -82,13 +86,13 @@ router.post('/', async (req, res) => {
 
 // 게시글 수정
 router.put('/:postId', async (req, res) => {
-  // const { userId, password } = res.locals.user; authMiddleware 적용 이후 사용 예정
-  // const { title, content } = req.body; // authMiddleware 적용 이후 사용 예정
+  // const { userId, password } = res.locals.user; // authMiddleware 적용 이후 사용 예정
   const { postId } = req.params;
-  const { title, content, password } = req.body; // authMiddleware 적용 이후 password 객체 삭제 제외 예정
+  const { title, content } = req.body;
 
-  const post = await Posts.findOne({
-    where: { postId: postId },
+  const post = await Post.findOne({
+    where: { id: postId },
+    attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
   });
 
   // # 403 Cookie가 존재하지 않을 경우
@@ -107,12 +111,7 @@ router.put('/:postId', async (req, res) => {
       errorMessage: '게시글이 존재하지 않습니다.',
     });
   }
-
-  if (post.password !== password) {
-    return res.status(401).json({
-      message: '게시글의 비밀번호와, 전달받은 비밀번호가 일치하지 않습니다.',
-    });
-  } // authMiddleware 적용 후 삭제 예정
+  // 일치하지 않는 게시글번호에 대한 에러 리턴 추가 필요
 
   if (!title) {
     res
@@ -129,12 +128,11 @@ router.put('/:postId', async (req, res) => {
   }
 
   try {
-    await Posts.update(
+    await Post.update(
       { title, content }, // 수정할 컬럼 및 데이터
       {
-        where: {
-          [Op.and]: [{ postId }, { password }], // authMiddleware 적용 이후 삭제 예정
-        },
+        where: { id: postId }, // authMiddleware 적용 이후 삭제 예정
+        attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
         // where:{[Op.and]: [{userId},{password}]} // authMiddleware 적용 이후 사용 예정
       }
     );
@@ -151,10 +149,11 @@ router.put('/:postId', async (req, res) => {
 router.delete('/:postId', async (req, res) => {
   // const { userId, password } = res.locals.user; authMiddleware 적용 이후 사용 예정
   const { postId } = req.params;
-  const { password } = req.body; // authMiddleware 적용 이후 삭제 예정
+  // const { password } = req.body; // authMiddleware 적용 이후 삭제 예정
 
-  const post = await Posts.findOne({
-    where: { postId: postId },
+  const post = await Post.findOne({
+    where: { id: postId }, // authMiddleware 적용 이후 삭제 예정
+    attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
   });
 
   // # 403 Cookie가 존재하지 않을 경우
@@ -170,17 +169,17 @@ router.delete('/:postId', async (req, res) => {
     });
   }
 
-  if (post.password !== password) {
-    return res.status(401).json({
-      message: '게시글의 비밀번호와, 전달받은 비밀번호가 일치하지 않습니다.',
-    });
-  } // authMiddleware 적용 이후 삭제 예정
+  // if (post.password !== password) {
+  //   return res.status(401).json({
+  //     message: '게시글의 비밀번호와, 전달받은 비밀번호가 일치하지 않습니다.',
+  //   });
+  // } // authMiddleware 적용 이후 삭제 예정
 
   try {
-    await Posts.destroy({
-      where: {
-        [Op.and]: [{ postId }, { password }], // authMiddleware 적용 이후 삭제 예정
-      },
+    await Post.destroy({
+      where: { id: postId }, // authMiddleware 적용 이후 삭제 예정
+      attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+
       // where:{[Op.and]: [{userId},{password}]} // authMiddleware 적용 이후 사용 예정
     });
 
