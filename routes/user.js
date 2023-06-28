@@ -11,7 +11,7 @@ require('dotenv').config();
 // 이메일 인증 body에 email 값 받으면 내 email에서 해당 email로 인증코드 전송.
 router.post('/email', async (req, res) => {
   const { email } = req.body;
-  const authNum = Math.random().toString(18).substring(2, 6);
+  const authNum = Math.random().toString(18).substring(2, 8);
   const authtoken = jwt.sign(
     {
       authNum: authNum,
@@ -50,7 +50,7 @@ router.post('/email', async (req, res) => {
 
 // 회원가입
 router.post('/sginup', async (req, res) => {
-  const { email, nickname, password, confirm } = req.body;
+  const { email, emailConfirm, nickname, password, confirm } = req.body;
   const pattern = new RegExp('^[a-zA-Z][0-9a-zA-Z]{2,}$'); //조건 정규식
   const isExistEmail = await User.findOne({ where: { email } });
   const isExistNick = await User.findOne({ where: { nickname } });
@@ -58,11 +58,14 @@ router.post('/sginup', async (req, res) => {
   const salt = await bcrypt.genSalt(10); // 값이 높을 수록 암호화 연산이 증가. 하지만 암호화하는데 속도가 느려진다.
   const hash = await bcrypt.hash(password, salt); //bcrypt.hash에 인자로 암호화해줄 password와 salt를 인자로 넣어주면 끝이다.
   //-------------------------------------------------인증키--------------------------------------------------------------------
-  // const { authorization } = req.cookies;
-  // const [tokenType, authtoken] = authorization.split(' '); //토큰 타입은 bearer ,authtoken = authNum, secret_key
-  // const decodedToken = jwt.verify(authtoken, 'secret_key'); //jswt token 검증
-  // console.log(decodedToken.authNum); //이메일에 있는 authNum과 token값이 같다면 회원가입 진행 ---(입력칸이 필요함..)
+  const { authorization } = req.cookies;
+  const [tokenType, authtoken] = authorization.split(' '); //토큰 타입은 bearer ,authtoken = authNum, secret_key
+  const decodedToken = jwt.verify(authtoken, 'secret_key'); //jswt token 검증
+  console.log(decodedToken.authNum); //이메일에 있는 authNum과 token값이 같다면 회원가입 진행 ---(입력칸이 필요함..)
 
+  if (emailConfirm !== decodedToken.authNum) {
+    return res.status(412).json({ errorMessage: '유효한 인증 키가 아닙니다.' });
+  }
   if (!pattern.test(nickname)) {
     return res.status(412).json({
       errorMessage:
@@ -141,12 +144,11 @@ router.post('/sginin', async (req, res) => {
 });
 
 //제거
-router.post('/sginin', async (req, res) => {
+router.delete('/a', async (req, res) => {
   const { email } = req.body;
   await User.destroy({ where: { email } });
   return res.json({ message: '제거 완료.' });
 });
-
 // 자기소개 및 닉네임
 router.get('//:userId', async (req, res) => {
   try {
