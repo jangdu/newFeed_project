@@ -128,4 +128,57 @@ router.post('/sginin', async (req, res) => {
   await User.destroy({ where: { email } });
   return res.json({ message: '제거 완료.' });
 });
+
+// 자기소개 및 닉네임
+router.get('//:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // const { nickname, content } = req.body;
+    const userInfo = await User.findOne({
+      where: { userId: userId },
+      attributes: ['nickname', 'content'], //url??
+    });
+
+    if (!userInfo) {
+      return res
+        .status(404)
+        .json({ message: '검색된 유저가 존재하지 않습니다.' });
+    }
+
+    return res.status(200).json({
+      userInfo,
+      message: '검색한 유저 결과입니다.',
+    });
+  } catch (error) {
+    console.error('에러 발생:', error); // 에러 로깅
+    return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+  }
+});
+
+router.put('/users/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { nickname, content, password } = req.body;
+
+    const user = await User.findOne({ where: { userId } });
+
+    if (!user) {
+      return res.status(400).json({
+        message: '사용자 정보가 없습니다.',
+      });
+    } else if (user.password !== password) {
+      return res.status(401).json({
+        message: '수정 권한이 없습니다.',
+      });
+    }
+    // 프로필 수정
+    await user.update({ nickname, content }, { where: { userId, password } });
+    // 수정할 컬럼 및 데이터      프로필 아이디와 비밀번호가 일치할 때 수정
+    return res.status(200).json({ message: '프로필이 수정되었습니다.' });
+  } catch (error) {
+    console.error('에러 발생:', error); // 에러 로깅
+    return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+  }
+});
+
 module.exports = router;
