@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Posts } = require('../models/post.js');
+const { Post } = require('../models/post.js');
 const { Op } = require('sequelize');
 // const authMiddleware = require('../middlewares/auth-middleware.js');
 //import * as tweetController from '../controller/tweet.js';
@@ -14,7 +14,7 @@ const { Op } = require('sequelize');
 // 게시글 전체 조회
 router.get('/', async (req, res) => {
   try {
-    const posts = await Posts.findAll({
+    const posts = await Post.findAll({
       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
     });
 
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
 router.get('/:postId', async (req, res) => {
   const { postId } = req.params;
   try {
-    const post = await Posts.findOne({
+    const post = await Post.findOne({
       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
       where: { postId },
     });
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
   // const { userId, password } = res.locals.user; authMiddleware 적용 이후 사용 예정
   // const { title, content } = req.body; authMiddleware 적용 이후 사용 예정
   const { title, content, password } = req.body; // authMiddleware 적용 이후 삭제 예정
-  const post = await Posts.create({ title, content, password });
+  const post = await Post.create({ title, content, password });
 
   // # 403 Cookie가 존재하지 않을 경우
   // {"errorMessage": "로그인이 필요한 기능입니다."}
@@ -87,7 +87,7 @@ router.put('/:postId', async (req, res) => {
   const { postId } = req.params;
   const { title, content, password } = req.body; // authMiddleware 적용 이후 password 객체 삭제 제외 예정
 
-  const post = await Posts.findOne({
+  const post = await Post.findOne({
     where: { postId: postId },
   });
 
@@ -129,7 +129,7 @@ router.put('/:postId', async (req, res) => {
   }
 
   try {
-    await Posts.update(
+    await Post.update(
       { title, content }, // 수정할 컬럼 및 데이터
       {
         where: {
@@ -153,7 +153,7 @@ router.delete('/:postId', async (req, res) => {
   const { postId } = req.params;
   const { password } = req.body; // authMiddleware 적용 이후 삭제 예정
 
-  const post = await Posts.findOne({
+  const post = await Post.findOne({
     where: { postId: postId },
   });
 
@@ -177,7 +177,7 @@ router.delete('/:postId', async (req, res) => {
   } // authMiddleware 적용 이후 삭제 예정
 
   try {
-    await Posts.destroy({
+    await Post.destroy({
       where: {
         [Op.and]: [{ postId }, { password }], // authMiddleware 적용 이후 삭제 예정
       },
