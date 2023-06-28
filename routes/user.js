@@ -11,7 +11,7 @@ require('dotenv').config();
 // 이메일 인증 body에 email 값 받으면 내 email에서 해당 email로 인증코드 전송.
 router.post('/email', async (req, res) => {
   const { email } = req.body;
-  const authNum = Math.random().toString(18).substr(2, 6);
+  const authNum = Math.random().toString(18).substring(2, 6);
   const authtoken = jwt.sign(
     {
       authNum: authNum,
