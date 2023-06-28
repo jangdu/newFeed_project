@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const authmiddleware = require('../middlewares/middleware.js');
 require('dotenv').config();
 
 //import * as tweetController from '../controller/tweet.js';
@@ -150,14 +151,14 @@ router.delete('/a', async (req, res) => {
   return res.json({ message: '제거 완료.' });
 });
 // 자기소개 및 닉네임
-router.get('//:userId', async (req, res) => {
+router.get('/users/:id', authmiddleware, async (req, res) => {
+  const { id } = req.params;
   try {
-    const { userId } = req.params;
-    // const { nickname, content } = req.body;
     const userInfo = await User.findOne({
-      where: { userId: userId },
+      where: { id: id },
       attributes: ['nickname', 'content'], //url??
     });
+
     if (!userInfo) {
       return res
         .status(404)
@@ -172,22 +173,25 @@ router.get('//:userId', async (req, res) => {
     return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
   }
 });
-router.put('/users/:userId', async (req, res) => {
+router.put('/users/:id', authmiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { nickname, content, password } = req.body;
+
   try {
-    const { userId } = req.params;
-    const { nickname, content, password } = req.body;
-    const user = await User.findOne({ where: { userId } });
+    const user = await User.findOne({ where: { id } });
     if (!user) {
       return res.status(400).json({
         message: '사용자 정보가 없습니다.',
       });
-    } else if (user.password !== password) {
+    } else if (!user.password) {
+      console.log(!user.password);
       return res.status(401).json({
         message: '수정 권한이 없습니다.',
       });
     }
     // 프로필 수정
-    await user.update({ nickname, content }, { where: { userId, password } });
+    await user.update({ nickname, content }, { where: { id, password } });
+
     // 수정할 컬럼 및 데이터      프로필 아이디와 비밀번호가 일치할 때 수정
     return res.status(200).json({ message: '프로필이 수정되었습니다.' });
   } catch (error) {
@@ -195,4 +199,5 @@ router.put('/users/:userId', async (req, res) => {
     return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
   }
 });
+
 module.exports = router;
