@@ -30,7 +30,7 @@ router.post('/email', async (req, res) => {
     if (!email) {
       return res
         .status(412)
-        .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+        .json({ errorMessage: '데이터 형식이 올바르지 않습니다..' });
     }
     await transporter.sendMail({
       from: `"11조 👻" <${process.env.NODEMAILER_USER}>`,
