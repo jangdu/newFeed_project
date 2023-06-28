@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { onclickEmailConfirmBtn, signupUser } from '../api/auth';
 
 const Signup = () => {
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
   const [comment, setComment] = useState('');
   const [imgUrl, setImgUrl] = useState('');
 
@@ -16,6 +18,15 @@ const Signup = () => {
       setConfirm('');
       return;
     }
+    signupUser(
+      nickname,
+      password,
+      confirm,
+      emailConfirm,
+      email,
+      comment,
+      imgUrl
+    );
   };
 
   return (
@@ -26,25 +37,45 @@ const Signup = () => {
           type="text"
           placeholder="사용자명"
           value={nickname}
+          required
           onChange={e => setNickname(e.target.value)}
         />
         <input
           type="password"
           placeholder="비밀번호"
           value={password}
+          required
           onChange={e => setPassword(e.target.value)}
         />
         <input
           type="password"
           placeholder="비밀번호 확인"
           value={confirm}
+          required
           onChange={e => setConfirm(e.target.value)}
         />
+        <div>
+          <input
+            type="email"
+            placeholder="이메일"
+            value={email}
+            required
+            onChange={e => setEmail(e.target.value)}
+          />
+          <button
+            onClick={() => {
+              onclickEmailConfirmBtn(email);
+            }}
+          >
+            인증하기
+          </button>
+        </div>
         <input
-          type="email"
-          placeholder="이메일"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          type="text"
+          placeholder="이메일 인증"
+          value={emailConfirm}
+          required
+          onChange={e => setEmailConfirm(e.target.value)}
         />
         <input
           type="text"

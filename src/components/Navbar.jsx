@@ -57,7 +57,14 @@ export default function Navbar() {
           </button>
         )}
         {token ? (
-          <button>로그아웃</button>
+          <button
+            onClick={() => {
+              localStorage.removeItem('token');
+              window.location.reload();
+            }}
+          >
+            로그아웃
+          </button>
         ) : (
           <button
             onClick={() => {

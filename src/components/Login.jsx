@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { loginUser } from '../api/auth';
 
 const Login = () => {
-  const [nickname, setNickname] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(nickname);
-    loginUser(nickname, password);
+    console.log(email);
+    loginUser(email, password);
   };
 
   return (
@@ -16,11 +16,11 @@ const Login = () => {
       <h2 className="mb-5">로그인</h2>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
-          id="nickname"
-          type="text"
-          placeholder="닉네임"
-          value={nickname}
-          onChange={e => setNickname(e.target.value)}
+          id="email"
+          type="email"
+          placeholder="이메일"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
         />
         <input
           type="password"
