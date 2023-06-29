@@ -15,7 +15,15 @@ const { Op } = require('sequelize');
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.findAll({
-      attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+      include: [
+        {
+          model: User,
+          attributes: ['nickname'],
+        },
+      ],
+
+      attributes: ['id', 'userId', 'title', 'createdAt', 'updatedAt'],
+      order: [['createdAt', 'DESC']],
     });
 
     return res.status(200).json({ data: posts });
@@ -26,6 +34,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+// before
+// router.get('/', async (req, res) => {
+//   try {
+//     const posts = await Post.findAll({
+//       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+//     });
+
+//     return res.status(200).json({ data: posts });
+//   } catch (error) {
+//     return res
+//       .status(400)
+//       .json({ errorMEssage: '게시글 조회에 실패하였습니다.' });
+//   }
+// });
+
 // 게시글 상세 조회
 router.get('/:postId', async (req, res) => {
   const { postId } = req.params;
@@ -34,8 +57,15 @@ router.get('/:postId', async (req, res) => {
 
   try {
     const post = await Post.findOne({
-      attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+      include: [
+        {
+          model: User,
+          attributes: ['nickname'],
+        },
+      ],
+      attributes: ['id', 'userId', 'title', 'createdAt', 'updatedAt'],
       where: { id: postId },
+      order: [['createdAt', 'DESC']],
     });
 
     return res.status(200).json({ data: post });
@@ -45,6 +75,26 @@ router.get('/:postId', async (req, res) => {
       .json({ errorMEssage: '게시글 조회에 실패하였습니다.' });
   }
 });
+
+// before
+// router.get('/:postId', async (req, res) => {
+//   const { postId } = req.params;
+
+//   // 일치하지 않는 id:postId는 id를 재확인해달라는 에러 리턴 추가 필요
+
+//   try {
+//     const post = await Post.findOne({
+//       attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+//       where: { id: postId },
+//     });
+
+//     return res.status(200).json({ data: post });
+//   } catch (error) {
+//     return res
+//       .status(400)
+//       .json({ errorMEssage: '게시글 조회에 실패하였습니다.' });
+//   }
+// });
 
 // 게시글 작성
 router.post('/', async (req, res) => {
