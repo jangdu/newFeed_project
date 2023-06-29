@@ -140,7 +140,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // 게시글 수정
-router.put('/:postId', async (req, res) => {
+router.put('/:postId', authMiddleware, async (req, res) => {
   const userId = req.userId; // authMiddleware 적용 이후 사용 예정
   const { postId } = req.params;
   const { title, content } = req.body;
@@ -198,7 +198,7 @@ router.put('/:postId', async (req, res) => {
 });
 
 // 게시글 삭제
-router.delete('/:postId', async (req, res) => {
+router.delete('/:postId', authMiddleware, async (req, res) => {
   const userId = req.userId; // authMiddleware 적용 이후 사용 예정
   const { postId } = req.params;
 
