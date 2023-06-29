@@ -25,32 +25,56 @@ router.get('/:id', async (req, res) => {
 });
 
 //댓글 생성
-router.post('/', middleware, async (req, res) => {
-  const { content } = req.body;
-  const userId = req.userId;
+router.post('/:postid', middleware, async (req, res) => {
+  try {
+    const { content } = req.body;
+    const { postId } = req.params;
+    const userId = req.userId;
+    if (!content) {
+      res.status(400).json({
+        errorMessage: '댓글을 입력해주세요',
+      });
+    }
 
-  if (!content) {
-    res.status(400).json({
-      errorMessage: '댓글을 입력해주세요',
+    // const post = await Post.findOne({ id: postId });
+
+    const post = await Post.findOne({
+      include: [
+        {
+          model: User,
+          attributes: ['nickname'],
+        },
+      ],
+      attributes: [
+        'id',
+        'userId',
+        'title',
+        'content',
+        'createdAt',
+        'updatedAt',
+      ],
+      where: { id: postId },
+      order: [['createdAt', 'DESC']],
+    });
+    console.log(post);
+    const comment = await Comment.create({
+      content: content,
+      postid: post.id,
+      userId: userId,
+    });
+    res.status(200).json({ comment });
+  } catch (error) {
+    res.status(500).json({
+      errorMessage: '서버 오류',
     });
   }
-
-  const postId = await Post.findOne({ id: Post.id });
-
-  const comment = await Comment.create({
-    content: content,
-    postId: Post.id,
-    userId: userId,
-  });
-  res.status(200).json({ comment });
 });
 
 //수정
-router.put('/:id', async (req, res) => {
+router.put('/:id', middleware, async (req, res) => {
   const { id } = req.params;
   const { content } = req.body;
   const comment = await Comment.findOne({ where: { id } });
-  console.log(comment);
   if (!comment) {
     res.status(400).json({
       errorMessage: '존재하지 않는 댓글입니다.',
@@ -65,7 +89,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //삭제
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', middleware, async (req, res) => {
   const { id } = req.params;
   const comment = await Comment.findOne({ id });
   if (!comment) {
