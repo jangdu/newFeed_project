@@ -11,26 +11,32 @@ const middleware = require('../middlewares/middleware.js');
 
 //댓글 조회
 router.get('/:postId', async (req, res) => {
-  const { postId } = req.params;
-  console.log(postId);
-  const comment = await Comment.findAll({
-    include: {
-      model: Post,
-      attributes: [
-        'id',
-        'title',
-        'content',
-        'userId',
-        'likes',
-        'createdAt',
-        'updatedAt',
-      ],
-    },
-    where: { postId },
-    order: [['createdAt', 'DESC']],
-  });
+  try {
+    const { postId } = req.params;
+    console.log(postId);
+    const comment = await Comment.findAll({
+      include: {
+        model: Post,
+        attributes: [
+          'id',
+          'title',
+          'content',
+          'userId',
+          'likes',
+          'createdAt',
+          'updatedAt',
+        ],
+      },
+      where: { postId },
+      order: [['createdAt', 'DESC']],
+    });
 
-  res.status(200).json({ postId, comment });
+    res.status(200).json({ postId, comment });
+  } catch (error) {
+    res.status(500).json({
+      errorMessage: '서버 오류',
+    });
+  }
 });
 
 //댓글 생성
@@ -99,16 +105,22 @@ router.put('/:postId/:commentId', middleware, async (req, res) => {
 
 //삭제
 router.delete('/:postId/:commentId', middleware, async (req, res) => {
-  const { commentId } = req.params;
-  const comment = await Comment.findOne({ Where: { id: commentId } });
-  if (!comment) {
-    res.status(400).json({
-      errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
+  try {
+    const { commentId } = req.params;
+    const comment = await Comment.findOne({ Where: { id: commentId } });
+    if (!comment) {
+      res.status(400).json({
+        errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
+      });
+    }
+    await comment.destroy({});
+
+    res.status(200).json({ success: '댓글이 삭제되었습니다.' });
+  } catch (error) {
+    res.status(500).json({
+      errorMessage: '서버 오류',
     });
   }
-  await comment.destroy({});
-
-  res.status(200).json({ success: '댓글이 삭제되었습니다.' });
 });
 
 module.exports = router;
