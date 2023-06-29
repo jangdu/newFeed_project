@@ -15,7 +15,7 @@ export const loginUser = async (email, password) => {
 
     if (response.ok) {
       const { token } = await response.json();
-      Cookies.set('authorization', token, { expires: 1 });
+      Cookies.set('authorization', `Bearer ${token}`, { expires: 1 });
       window.location.reload();
     } else {
       alert('로그인 실패');

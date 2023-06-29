@@ -23,7 +23,6 @@ export default function Home() {
       return (
         <div>
           {posts.map(postData => {
-            const { title, content, createdAt, userId, likes } = postData;
             return <PostCard key={postData.id} postData={postData} />;
           })}
         </div>

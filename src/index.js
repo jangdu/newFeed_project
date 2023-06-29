@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import MyProfile from './pages/MyProfile';
 import Posts from './pages/Posts';
 import PostDetail from './pages/PostDetail';
+import NewPost from './pages/NewPost';
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,11 @@ const router = createBrowserRouter([
         element: <Posts />,
       },
       {
-        path: '/post/:id',
+        path: '/posts/new',
+        element: <NewPost />,
+      },
+      {
+        path: '/post/:postId',
         element: <PostDetail />,
       },
     ],
