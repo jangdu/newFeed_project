@@ -22,7 +22,15 @@ router.get('/', async (req, res) => {
         },
       ],
 
-      attributes: ['id', 'userId', 'title', 'createdAt', 'updatedAt'],
+      attributes: [
+        'id',
+        'userId',
+        'title',
+        'content',
+        'likes',
+        'createdAt',
+        'updatedAt',
+      ],
       order: [['createdAt', 'DESC']],
     });
 
@@ -69,6 +77,7 @@ router.get('/:postId', async (req, res) => {
         'userId',
         'title',
         'content',
+        'likes',
         'createdAt',
         'updatedAt',
       ],

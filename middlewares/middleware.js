@@ -4,7 +4,12 @@ const { User } = require('../models');
 module.exports = async (req, res, next) => {
   try {
     const { authorization } = req.cookies;
+
+    if (!authorization) {
+      return res.status(401).json({ message: '인증 정보가 없습니다' });
+    }
     const [tokenType, token] = authorization.split(' ');
+
     if (tokenType !== 'Bearer') {
       return res
         .status(401)
@@ -13,6 +18,7 @@ module.exports = async (req, res, next) => {
 
     const decodedToken = jwt.verify(token, 'customized_secret_key');
     const userId = decodedToken.userId;
+    console.log(userId);
 
     const user = await User.findOne({ where: { id: userId } });
     if (!user) {
@@ -23,10 +29,12 @@ module.exports = async (req, res, next) => {
     }
     res.locals.user = user;
     req.userId = userId;
+    console.log(userId);
 
     next();
   } catch (error) {
     res.clearCookie('authorization');
+
     return res.status(401).json({
       message: '비정상적인 요청입니다.',
     });
