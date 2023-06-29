@@ -1,6 +1,4 @@
-import Cookies from 'js-cookie';
-
-//const TOKEN = 'token';
+const TOKEN = 'token';
 const url = process.env.REACT_APP_BASE_URL;
 
 export const loginUser = async (email, password) => {
@@ -15,7 +13,7 @@ export const loginUser = async (email, password) => {
 
     if (response.ok) {
       const { token } = await response.json();
-      Cookies.set('authorization', token, { expires: 1 });
+      localStorage.setItem(TOKEN, token);
       window.location.reload();
     } else {
       alert('로그인 실패');

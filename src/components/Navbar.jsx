@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import Login from './Login';
 import Signup from './Signup';
 import '../styles/nav.css';
+import Cookies from 'js-cookie';
 
 const customStyles = {
   overlay: {
@@ -24,12 +25,12 @@ const customStyles = {
 Modal.setAppElement('#root'); // App 요소 설정
 
 export default function Navbar() {
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(Cookies.get('authorization'));
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isSignupLogIn, setIsSignupLogIn] = useState('login');
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = Cookies.get('authorization');
     setToken(storedToken);
   }, []);
 
@@ -59,7 +60,7 @@ export default function Navbar() {
         {token ? (
           <button
             onClick={() => {
-              localStorage.removeItem('token');
+              Cookies.remove('authorization');
               window.location.reload();
             }}
           >

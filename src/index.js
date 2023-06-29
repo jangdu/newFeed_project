@@ -7,6 +7,7 @@ import NotFound from './pages/NotFound';
 import Home from './pages/Home';
 import MyProfile from './pages/MyProfile';
 import Posts from './pages/Posts';
+import PostDetail from './pages/PostDetail';
 
 const router = createBrowserRouter([
   {
@@ -23,10 +24,10 @@ const router = createBrowserRouter([
         path: '/posts',
         element: <Posts />,
       },
-      // {
-      //   path: '/posts',
-      //   element: <Posts />,
-      // },
+      {
+        path: '/post/:id',
+        element: <PostDetail />,
+      },
     ],
   },
 ]);
