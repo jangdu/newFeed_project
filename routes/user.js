@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const authmiddleware = require('../middlewares/middleware.js');
 require('dotenv').config();
 
 //import * as tweetController from '../controller/tweet.js';
@@ -149,4 +150,32 @@ router.delete('/a', async (req, res) => {
   await User.destroy({ where: { email } });
   return res.json({ message: '제거 완료.' });
 });
+// 프로필 조회
+router.get('/profile', authmiddleware, async (req, res) => {
+  const id = req.userId;
+  const userInfo = await User.findOne({ where: id });
+  res.json({ userInfo });
+  // console.log(id);
+}); // 아이디가 로그인 되어 있으므로 이 조건식이 필요 없음 유저를 읽어오면 됨
+
+//수정하는 것 g
+router.put('/profile', authmiddleware, async (req, res) => {
+  try {
+    const id = req.userId;
+    const { nickname, content } = req.body;
+
+    if (!nickname) {
+      return res.status(400).json({ message: '닉네임을 넣어주세요' });
+    }
+    if (!content) {
+      return res.status(401).json({ message: '내용을 넣어주십시오' });
+    }
+    await User.update({ nickname, content }, { where: { id } });
+    return res.status(200).json({ message: '프로필이 수정되었습니다.' });
+  } catch (error) {
+    console.error('에러 발생:', error);
+    return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+  }
+});
+
 module.exports = router;
