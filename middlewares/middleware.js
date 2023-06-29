@@ -14,7 +14,7 @@ module.exports = async (req, res, next) => {
     const decodedToken = jwt.verify(token, 'customized_secret_key');
     const userId = decodedToken.userId;
 
-    const user = await User.findOne({ where: { userId } });
+    const user = await User.findOne({ where: { id: userId } });
     if (!user) {
       res.clearCookie('authorization');
       return res
@@ -23,6 +23,7 @@ module.exports = async (req, res, next) => {
     }
     res.locals.user = user;
     req.userId = userId;
+    console.log(userId);
 
     next();
   } catch (error) {
