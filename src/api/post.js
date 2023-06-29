@@ -67,13 +67,15 @@ export const create = async newPost => {
   }
 };
 
-export const update = async (postId, title, content) => {
+export const updatePost = async (newPost, postId) => {
   try {
-    const response = await fetch(`${url}/posts/${postId}`, {
+    const response = await fetch(`${url}/api/posts/${postId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 포함 설정
+      body: JSON.stringify(newPost),
     });
 
     if (response.ok) {
@@ -88,19 +90,20 @@ export const update = async (postId, title, content) => {
   }
 };
 
-export const remove = async postId => {
+export const removePost = async postId => {
   try {
-    const response = await fetch(`${url}/posts/${postId}`, {
+    const response = await fetch(`${url}/api/posts/${postId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 포함 설정
     });
 
     if (response.ok) {
       return await response.json();
     } else {
-      alert('게시글 조회 실패');
+      alert();
       throw new Error('게시글 조회 실패');
     }
   } catch (error) {

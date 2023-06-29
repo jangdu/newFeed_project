@@ -18,10 +18,10 @@ export const loginUser = async (email, password) => {
       Cookies.set('authorization', `Bearer ${token}`, { expires: 1 });
       window.location.reload();
     } else {
-      alert('로그인 실패');
-      throw new Error('로그인에 실패했습니다.');
+      throw new Error();
     }
   } catch (error) {
+    alert(error);
     console.error(error);
     // 에러 처리
   }
@@ -58,10 +58,10 @@ export const signupUser = async (
       alert(data.message);
       window.location.reload();
     } else {
-      alert(data.errorMessage);
       throw new Error('로그인에 실패했습니다.');
     }
   } catch (error) {
+    alert(error);
     console.error(error);
     // 에러 처리
   }
@@ -84,7 +84,7 @@ export const onclickEmailConfirmBtn = async email => {
       alert(data.errorMessage);
     }
   } catch (error) {
-    console.error(error);
+    alert(error);
     // 에러 처리
   }
 };
@@ -104,11 +104,12 @@ export const getMyProfile = async () => {
       const { userInfo } = await response.json();
       return await userInfo;
     } else {
-      alert('로그인 실패');
+      alert(response.errorMessage);
       throw new Error('로그인에 실패했습니다.');
     }
   } catch (error) {
     console.error(error);
+    alert(error);
     // 에러 처리
   }
 };
@@ -129,11 +130,12 @@ export const updateMyProfile = async newProfile => {
       const { userInfo } = await response.json();
       return await userInfo;
     } else {
-      alert('로그인 실패');
+      alert(response.errorMessage);
       throw new Error('로그인에 실패했습니다.');
     }
   } catch (error) {
     console.error(error);
+    alert(error);
     // 에러 처리
   }
 };
