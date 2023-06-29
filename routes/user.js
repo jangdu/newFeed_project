@@ -150,40 +150,30 @@ router.delete('/a', async (req, res) => {
   await User.destroy({ where: { email } });
   return res.json({ message: '제거 완료.' });
 });
-// 자기소개 및 닉네임
+// 프로필 조회
 router.get('/profile', authmiddleware, async (req, res) => {
-  // const id = req.userId;
-  try {
-    const user = res.locals.user;
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: '검색된 유저가 존재하지 않습니다.' });
-    }
-    return res.status(200).json({
-      user,
-      message: '검색한 유저 결과입니다.',
-    });
-  } catch (error) {
-    console.error('에러 발생:', error); // 에러 로깅
-    return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
-  }
-});
-router.put('/profile', authmiddleware, async (req, res) => {
-  // const id = req.userId;
-  const user = res.locals.user;
-  const { nickname, content } = req.body;
+  const id = req.userId;
+  const userInfo = await User.findOne({ where: id });
+  res.json({ userInfo });
+  // console.log(id);
+}); // 아이디가 로그인 되어 있으므로 이 조건식이 필요 없음 유저를 읽어오면 됨
 
-  // 프로필 수정
+//수정
+router.put('/profile', authmiddleware, async (req, res) => {
   try {
-    // await user.update({ nickname, content });
-    user.nickname = nickname;
-    user.content = content;
-    user.save();
-    // 수정할 컬럼 및 데이터      프로필 아이디와 비밀번호가 일치할 때 수정
+    const id = req.userId;
+    const { nickname, content } = req.body;
+
+    if (!nickname) {
+      return res.status(400).json({ message: '닉네임을 넣어주세요' });
+    }
+    if (!content) {
+      return res.status(401).json({ message: '내용을 넣어주세요' });
+    }
+    await User.update({ nickname, content }, { where: { id } });
     return res.status(200).json({ message: '프로필이 수정되었습니다.' });
   } catch (error) {
-    console.error('에러 발생:', error); // 에러 로깅
+    console.error('에러 발생:', error);
     return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
   }
 });
