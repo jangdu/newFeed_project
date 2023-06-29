@@ -76,8 +76,8 @@ export const onclickEmailConfirmBtn = async email => {
       },
       body: JSON.stringify({ email }),
     });
+
     const data = await response.json();
-    console.log(data);
     if (response.ok) {
       alert(data.message);
     } else {
