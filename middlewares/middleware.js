@@ -23,6 +23,7 @@ module.exports = async (req, res, next) => {
     }
     res.locals.user = user;
     req.userId = userId;
+    console.log(userId);
 
     next();
   } catch (error) {
