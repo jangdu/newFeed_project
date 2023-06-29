@@ -158,7 +158,7 @@ router.get('/profile', authmiddleware, async (req, res) => {
   // console.log(id);
 }); // 아이디가 로그인 되어 있으므로 이 조건식이 필요 없음 유저를 읽어오면 됨
 
-//수정
+//수정하는 것 g
 router.put('/profile', authmiddleware, async (req, res) => {
   try {
     const id = req.userId;
@@ -168,7 +168,7 @@ router.put('/profile', authmiddleware, async (req, res) => {
       return res.status(400).json({ message: '닉네임을 넣어주세요' });
     }
     if (!content) {
-      return res.status(401).json({ message: '내용을 넣어주세요' });
+      return res.status(401).json({ message: '내용을 넣어주십시오' });
     }
     await User.update({ nickname, content }, { where: { id } });
     return res.status(200).json({ message: '프로필이 수정되었습니다.' });
