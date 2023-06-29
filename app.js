@@ -7,7 +7,7 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 const routes = require('./routes/index.js');
 app.use(routes);
 
