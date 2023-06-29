@@ -44,7 +44,7 @@ export default function Navbar() {
       </Link>
       <nav className=" flex items-center gap-4 font-semibold">
         <Link to="/">Home</Link>
-        <Link to="/posts">Post</Link>
+        {/* <Link to="/posts">Post</Link> */}
         {token ? (
           <Link to="/profile">내 프로필</Link>
         ) : (

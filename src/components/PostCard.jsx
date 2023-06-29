@@ -28,7 +28,7 @@ export default function PostCard({
 
       <div>
         <p className="m-2 text-md text-black font-semibold">{nickname}</p>
-        <p className="m-2 text-sm text-black font-semibold">❤️ {likes}</p>
+        {/* <p className="m-2 text-sm text-black font-semibold">❤️ {likes}</p> */}
         <p className="mx-2 py-6 text-gray-500">{createdAt.substring(0, 10)}</p>
       </div>
     </div>

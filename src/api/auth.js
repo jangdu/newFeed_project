@@ -88,3 +88,52 @@ export const onclickEmailConfirmBtn = async email => {
     // 에러 처리
   }
 };
+
+export const getMyProfile = async () => {
+  const requestOptions = {
+    method: 'GET', // HTTP 요청 메소드 (GET, POST 등)
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함 설정
+  };
+
+  try {
+    const response = await fetch(`${url}/api/user/profile`, requestOptions);
+    if (response.ok) {
+      const { userInfo } = await response.json();
+      return await userInfo;
+    } else {
+      alert('로그인 실패');
+      throw new Error('로그인에 실패했습니다.');
+    }
+  } catch (error) {
+    console.error(error);
+    // 에러 처리
+  }
+};
+
+export const updateMyProfile = async newProfile => {
+  const requestOptions = {
+    method: 'PUT', // HTTP 요청 메소드 (GET, POST 등)
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 쿠키 포함 설정
+    body: JSON.stringify(newProfile),
+  };
+
+  try {
+    const response = await fetch(`${url}/api/user/profile`, requestOptions);
+    if (response.ok) {
+      const { userInfo } = await response.json();
+      return await userInfo;
+    } else {
+      alert('로그인 실패');
+      throw new Error('로그인에 실패했습니다.');
+    }
+  } catch (error) {
+    console.error(error);
+    // 에러 처리
+  }
+};
