@@ -76,6 +76,7 @@ export default function Navbar() {
             로그인
           </button>
         )}
+        {token && <Link to="/posts/new">글쓰기</Link>}
       </nav>
       <Modal
         isOpen={modalIsOpen}

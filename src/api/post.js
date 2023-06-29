@@ -44,13 +44,15 @@ export const getByPostId = async postId => {
   }
 };
 
-export const create = async (title, content) => {
+export const create = async newPost => {
   try {
-    const response = await fetch(`${url}/posts/`, {
+    const response = await fetch(`${url}/api/posts/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 포함 설정
+      body: JSON.stringify(newPost),
     });
 
     if (response.ok) {
