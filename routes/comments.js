@@ -10,22 +10,31 @@ const middleware = require('../middlewares/middleware.js');
 // });
 
 //댓글 조회
-router.get('/', async (req, res) => {
-  const comment = await Comment.findAll({});
+router.get('/:postId', async (req, res) => {
+  const { postId } = req.params;
+  console.log(postId);
+  const comment = await Comment.findAll({
+    include: {
+      model: Post,
+      attributes: [
+        'id',
+        'title',
+        'content',
+        'userId',
+        'likes',
+        'createdAt',
+        'updatedAt',
+      ],
+    },
+    where: { postId },
+    order: [['createdAt', 'DESC']],
+  });
 
-  res.status(200).json({ comment: comment });
-});
-
-//댓글 상세 조회
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const comment = await Comment.findOne({ where: { id } });
-
-  res.status(200).json({ comment: comment });
+  res.status(200).json({ postId, comment });
 });
 
 //댓글 생성
-router.post('/:postid', middleware, async (req, res) => {
+router.post('/:postId', middleware, async (req, res) => {
   try {
     const { content } = req.body;
     const { postId } = req.params;
@@ -38,13 +47,7 @@ router.post('/:postid', middleware, async (req, res) => {
 
     // const post = await Post.findOne({ id: postId });
 
-    const post = await Post.findOne({
-      include: [
-        {
-          model: User,
-          attributes: ['nickname'],
-        },
-      ],
+    const post = await Post.findAll({
       attributes: [
         'id',
         'userId',
@@ -59,8 +62,8 @@ router.post('/:postid', middleware, async (req, res) => {
     console.log(post);
     const comment = await Comment.create({
       content: content,
-      postid: post.id,
-      userId: userId,
+      postId,
+      userId,
     });
     res.status(200).json({ comment });
   } catch (error) {
@@ -71,27 +74,33 @@ router.post('/:postid', middleware, async (req, res) => {
 });
 
 //수정
-router.put('/:id', middleware, async (req, res) => {
-  const { id } = req.params;
-  const { content } = req.body;
-  const comment = await Comment.findOne({ where: { id } });
-  if (!comment) {
-    res.status(400).json({
-      errorMessage: '존재하지 않는 댓글입니다.',
+router.put('/:postId/:commentId', middleware, async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { content } = req.body;
+    const comment = await Comment.findOne({ where: { id: commentId } });
+    if (!comment) {
+      res.status(400).json({
+        errorMessage: '존재하지 않는 댓글입니다.',
+      });
+    }
+    await comment.update({
+      content: content,
+      updateAt: Date.now,
+    });
+
+    res.status(200).json({ comment });
+  } catch (error) {
+    res.status(500).json({
+      errorMessage: '서버 오류',
     });
   }
-  await comment.update({
-    content: content,
-    updateAt: Date.now,
-  });
-
-  res.status(200).json({ comment });
 });
 
 //삭제
-router.delete('/:id', middleware, async (req, res) => {
-  const { id } = req.params;
-  const comment = await Comment.findOne({ id });
+router.delete('/:postId/:commentId', middleware, async (req, res) => {
+  const { commentId } = req.params;
+  const comment = await Comment.findOne({ Where: { id: commentId } });
   if (!comment) {
     res.status(400).json({
       errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
