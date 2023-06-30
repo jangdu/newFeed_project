@@ -43,15 +43,8 @@ router.post('/:postId', middleware, async (req, res) => {
       });
     }
 
-    // const post = await Post.findOne({ id: postId });
-
-    const post = await Post.findAll({
-      where: { id: postId },
-      order: [['createdAt', 'DESC']],
-    });
-    console.log(post);
     const comment = await Comment.create({
-      content: content,
+      content,
       postId,
       userId,
     });
