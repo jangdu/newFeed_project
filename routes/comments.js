@@ -17,7 +17,7 @@ router.get('/:postId', async (req, res) => {
     const comment = await Comment.findAll({
       include: {
         model: User,
-        attributes: ['userId', 'nickname'],
+        attributes: ['id', 'nickname'],
       },
       where: { postId },
       order: [['createdAt', 'DESC']],
