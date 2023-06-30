@@ -16,6 +16,7 @@ router.get('/:postId', async (req, res) => {
     console.log(postId);
     const comment = await Comment.findAll({
       include: {
+<<<<<<< HEAD
         model: Post,
         attributes: [
           'id',
@@ -26,6 +27,10 @@ router.get('/:postId', async (req, res) => {
           'createdAt',
           'updatedAt',
         ],
+=======
+        model: User,
+        attributes: ['id', 'nickname'],
+>>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
       },
       where: { postId },
       order: [['createdAt', 'DESC']],
@@ -51,23 +56,8 @@ router.post('/:postId', middleware, async (req, res) => {
       });
     }
 
-    // const post = await Post.findOne({ id: postId });
-
-    const post = await Post.findAll({
-      attributes: [
-        'id',
-        'userId',
-        'title',
-        'content',
-        'createdAt',
-        'updatedAt',
-      ],
-      where: { id: postId },
-      order: [['createdAt', 'DESC']],
-    });
-    console.log(post);
     const comment = await Comment.create({
-      content: content,
+      content,
       postId,
       userId,
     });
@@ -80,7 +70,7 @@ router.post('/:postId', middleware, async (req, res) => {
 });
 
 //수정
-router.put('/:postId/:commentId', middleware, async (req, res) => {
+router.put('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
     const { content } = req.body;
@@ -104,16 +94,29 @@ router.put('/:postId/:commentId', middleware, async (req, res) => {
 });
 
 //삭제
+<<<<<<< HEAD
 router.delete('/:postId/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
+=======
+router.delete('/:commentId', middleware, async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    console.log('******************');
+    console.log(commentId);
+>>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
     const comment = await Comment.findOne({ Where: { id: commentId } });
     if (!comment) {
       res.status(400).json({
         errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
       });
     }
+<<<<<<< HEAD
     await comment.destroy({});
+=======
+    await Comment.destroy({ where: { id: commentId } });
+>>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
 
     res.status(200).json({ success: '댓글이 삭제되었습니다.' });
   } catch (error) {

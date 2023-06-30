@@ -170,7 +170,7 @@ router.delete('/:postId', authMiddleware, async (req, res) => {
 
   const post = await Post.findOne({
     where: { id: postId },
-    // attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
+    attributes: ['id', 'title', 'content', 'createdAt', 'userId', 'likes'],
   }); // attributes가 필요할지 다시 확인할 것, 삭제는 아래 Post.destroy에서 할 것이고, 지금 변수 선언 post는 게시글의 유무를 확인하기 위한 용도니까 필요 없을 것 같음.
 
   if (!post) {
