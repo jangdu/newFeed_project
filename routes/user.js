@@ -178,4 +178,17 @@ router.put('/profile', authmiddleware, async (req, res) => {
   }
 });
 
+router.get('/me', authmiddleware, (req, res, next) => {
+  try {
+    if (!req.userId) {
+      return res
+        .status(401)
+        .json({ errorMessage: '로그인된 사용자가 아닙니다' });
+    }
+    return res.status(200).json({ userId: req.userId });
+  } catch (error) {
+    return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+  }
+});
+
 module.exports = router;
