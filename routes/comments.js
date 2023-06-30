@@ -61,12 +61,6 @@ router.put('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
     const { content } = req.body;
-
-    if (!content || content == '') {
-      res.status(412).json({
-        errorMessage: '댓글 수정내용을 입력해주세요',
-      });
-    }
     const comment = await Comment.findOne({ where: { id: commentId } });
     if (!comment) {
       res.status(400).json({
