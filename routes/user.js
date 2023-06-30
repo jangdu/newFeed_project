@@ -156,22 +156,34 @@ router.get('/profile', authmiddleware, async (req, res) => {
   const userInfo = await User.findOne({ where: id });
   res.json({ userInfo });
   // console.log(id);
-}); // 아이디가 로그인 되어 있으므로 이 조건식이 필요 없음 유저를 읽어오면 됨
+});
 
-//수정하는 것 g
+// 프로필 수정
 router.put('/profile', authmiddleware, async (req, res) => {
   try {
     const id = req.userId;
     const { nickname, content } = req.body;
 
-    if (!nickname) {
-      return res.status(400).json({ message: '닉네임을 넣어주세요' });
+    if (nickname && content) {
+      // 닉네임과 콘텐트 모두 있는 경우에는 둘 다 수정
+      await User.update({ nickname, content }, { where: { id } });
+      console.log('nid>', nickname);
+      return res.status(200).json({ message: '프로필이 수정되었습니다.' });
+    } else if (nickname) {
+      // 닉네임만 있는 경우에는 닉네임만 수정
+      await User.update({ nickname }, { where: { id } });
+      return res
+        .status(200)
+        .json({ message: '프로필의 닉네임이 수정되었습니다.' });
+    } else if (content) {
+      // 콘텐트만 있는 경우에는 콘텐트만 수정
+      await User.update({ content }, { where: { id } });
+      return res
+        .status(200)
+        .json({ message: '프로필의 콘텐트가 수정되었습니다.' });
+    } else {
+      return res.status(400).json({ message: '수정할 내용을 입력해주세요.' });
     }
-    if (!content) {
-      return res.status(401).json({ message: '내용을 넣어주십시오' });
-    }
-    await User.update({ nickname, content }, { where: { id } });
-    return res.status(200).json({ message: '프로필이 수정되었습니다.' });
   } catch (error) {
     console.error('에러 발생:', error);
     return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
