@@ -57,8 +57,10 @@ export const signupUser = async (
     const data = await response.json();
     if (response.ok) {
       alert(data.message);
+      Cookies.remove('emailToken');
       window.location.reload();
     } else {
+      Cookies.remove('emailToken');
       throw new Error(data.errorMessage);
     }
   } catch (error) {
