@@ -51,6 +51,7 @@ export const signupUser = async (
         comment,
         imgUrl,
       }),
+      credentials: 'include', // 쿠키 포함 설정
     });
 
     const data = await response.json();
@@ -58,7 +59,7 @@ export const signupUser = async (
       alert(data.message);
       window.location.reload();
     } else {
-      throw new Error('로그인에 실패했습니다.');
+      throw new Error(data.errorMessage);
     }
   } catch (error) {
     alert(error);
@@ -74,6 +75,7 @@ export const onclickEmailConfirmBtn = async email => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // 쿠키 포함 설정
       body: JSON.stringify({ email }),
     });
 

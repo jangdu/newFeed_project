@@ -22,8 +22,8 @@ const Signup = () => {
       nickname,
       password,
       confirm,
-      emailConfirm,
       email,
+      emailConfirm,
       comment,
       imgUrl
     );

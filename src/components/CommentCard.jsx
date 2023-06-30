@@ -48,7 +48,7 @@ export default function CommentCard({ commentData, userId, fetchData }) {
             {commentData.createdAt.substring(0, 10)}
           </p>
 
-          {userId && (
+          {userId === commentData.User.id && (
             <div className="h-fit my-auto mx-4">
               <Button text={'수정'} onClick={onClickUpdateBtn} />
               <Button text={'삭제'} onClick={onClickDeleteBtn} />

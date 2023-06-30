@@ -62,7 +62,7 @@ export default function PostDetail() {
         <div className="w-full max-w-3xl mx-auto">
           <div className="flex justify-between">
             <h1 className="text-4xl font-bold mt-6">{post.title}</h1>
-            {myUserId && (
+            {myUserId === post.User.id && (
               <div className="flex gap-4 h-fit mt-4">
                 <Button text={'수정'} onClick={onClickUpdateBtn} />
                 <Button text={'삭제'} onClick={onClickDeleteBtn} />

@@ -32,7 +32,8 @@ export const getByPostId = async postId => {
       return await response.json();
       //return await data;
     } else {
-      alert('게시글 조회 실패');
+      alert('게시글이 존재하지 않습니다.');
+      window.location.href = '/';
       throw new Error('게시글 조회 실패');
     }
   } catch (error) {
