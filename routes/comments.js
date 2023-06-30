@@ -16,21 +16,8 @@ router.get('/:postId', async (req, res) => {
     console.log(postId);
     const comment = await Comment.findAll({
       include: {
-<<<<<<< HEAD
-        model: Post,
-        attributes: [
-          'id',
-          'title',
-          'content',
-          'userId',
-          'likes',
-          'createdAt',
-          'updatedAt',
-        ],
-=======
         model: User,
         attributes: ['id', 'nickname'],
->>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
       },
       where: { postId },
       order: [['createdAt', 'DESC']],
@@ -74,6 +61,12 @@ router.put('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
     const { content } = req.body;
+
+    if (!content || content == '') {
+      res.status(412).json({
+        errorMessage: '댓글 수정내용을 입력해주세요',
+      });
+    }
     const comment = await Comment.findOne({ where: { id: commentId } });
     if (!comment) {
       res.status(400).json({
@@ -94,29 +87,19 @@ router.put('/:commentId', middleware, async (req, res) => {
 });
 
 //삭제
-<<<<<<< HEAD
-router.delete('/:postId/:commentId', middleware, async (req, res) => {
-  try {
-    const { commentId } = req.params;
-=======
 router.delete('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
 
     console.log('******************');
     console.log(commentId);
->>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
     const comment = await Comment.findOne({ Where: { id: commentId } });
     if (!comment) {
       res.status(400).json({
         errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
       });
     }
-<<<<<<< HEAD
-    await comment.destroy({});
-=======
     await Comment.destroy({ where: { id: commentId } });
->>>>>>> ab5a667b61f21bc043634faeed2ce942eb95e88e
 
     res.status(200).json({ success: '댓글이 삭제되었습니다.' });
   } catch (error) {
