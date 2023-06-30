@@ -57,7 +57,7 @@ router.post('/:postId', middleware, async (req, res) => {
 });
 
 //수정
-router.put('/:postId/:commentId', middleware, async (req, res) => {
+router.put('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
     const { content } = req.body;
@@ -81,16 +81,19 @@ router.put('/:postId/:commentId', middleware, async (req, res) => {
 });
 
 //삭제
-router.delete('/:postId/:commentId', middleware, async (req, res) => {
+router.delete('/:commentId', middleware, async (req, res) => {
   try {
     const { commentId } = req.params;
+
+    console.log('******************');
+    console.log(commentId);
     const comment = await Comment.findOne({ Where: { id: commentId } });
     if (!comment) {
       res.status(400).json({
         errorMessage: '댓글이 삭제되었거나 존재하지 않습니다.',
       });
     }
-    await comment.destroy({});
+    await Comment.destroy({ where: { id: commentId } });
 
     res.status(200).json({ success: '댓글이 삭제되었습니다.' });
   } catch (error) {
