@@ -13,17 +13,16 @@ export default function PostDetail() {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await getByPostId(postId);
-      setPost(data);
-      if (Cookies.get('authorization')) {
-        const userId = await getMyUserId();
-        await setMyUserId(userId);
-      }
-      return await setIsLoading(false);
+  async function fetchData() {
+    const { data } = await getByPostId(postId);
+    setPost(data);
+    if (Cookies.get('authorization')) {
+      const userId = await getMyUserId();
+      await setMyUserId(userId);
     }
-
+    return await setIsLoading(false);
+  }
+  useEffect(() => {
     fetchData();
   }, [postId]);
 
@@ -41,7 +40,7 @@ export default function PostDetail() {
         await updatePost(newProfile, postId);
 
         alert('수정완료');
-        window.location.reload();
+        fetchData();
       } catch (error) {
         alert('실패');
       }
@@ -50,8 +49,9 @@ export default function PostDetail() {
       console.log('No user input.');
     }
   };
-  const onClickDeleteBtn = () => {
+  const onClickDeleteBtn = async () => {
     removePost(postId);
+    fetchData();
   };
 
   if (isLoading) {
