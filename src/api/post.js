@@ -1,6 +1,3 @@
-import Cookies from 'js-cookie';
-
-const TOKEN = 'token';
 const url = process.env.REACT_APP_BASE_URL;
 const requestOptions = {
   method: 'GET', // HTTP 요청 메소드 (GET, POST 등)
@@ -101,9 +98,11 @@ export const removePost = async postId => {
     });
 
     if (response.ok) {
+      alert('게시글 삭제 완료');
+      window.location.href = '/';
       return await response.json();
     } else {
-      alert();
+      alert('게시글 삭제 실패');
       throw new Error('게시글 조회 실패');
     }
   } catch (error) {

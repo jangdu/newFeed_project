@@ -3,8 +3,6 @@ import Loding from './Loding';
 import { createComment, getAllComments } from '../api/comment';
 import CommentCard from './CommentCard';
 import Button from './ui/Button';
-import { getMyUserId } from '../api/auth';
-import Cookies from 'js-cookie';
 
 export default function Comment({ postId, userId }) {
   const [comments, setComments] = useState([]);
