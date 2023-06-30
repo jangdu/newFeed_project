@@ -16,16 +16,8 @@ router.get('/:postId', async (req, res) => {
     console.log(postId);
     const comment = await Comment.findAll({
       include: {
-        model: Post,
-        attributes: [
-          'id',
-          'title',
-          'content',
-          'userId',
-          'likes',
-          'createdAt',
-          'updatedAt',
-        ],
+        model: User,
+        attributes: ['nickname'],
       },
       where: { postId },
       order: [['createdAt', 'DESC']],
@@ -54,14 +46,6 @@ router.post('/:postId', middleware, async (req, res) => {
     // const post = await Post.findOne({ id: postId });
 
     const post = await Post.findAll({
-      attributes: [
-        'id',
-        'userId',
-        'title',
-        'content',
-        'createdAt',
-        'updatedAt',
-      ],
       where: { id: postId },
       order: [['createdAt', 'DESC']],
     });
