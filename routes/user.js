@@ -40,7 +40,7 @@ router.post('/email', async (req, res) => {
       text: 'Hello world?', // plain text body
       html: `<h1>${authNum}</h1>`, // html body
     });
-    res.cookie('authorization', `Bearer ${authtoken}`);
+    res.cookie('emailToken', `Bearer ${authtoken}`);
     return res.status(201).json({ message: '인증 키가 발송되었습니다.' });
   } catch (error) {
     return res
