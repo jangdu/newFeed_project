@@ -3,9 +3,13 @@ import { getByPostId, removePost, updatePost } from '../api/post';
 import { useParams } from 'react-router-dom';
 import Loding from '../components/Loding';
 import Button from '../components/ui/Button';
+import Comment from '../components/Comment';
+import Cookies from 'js-cookie';
+import { getMyUserId } from '../api/auth';
 
 export default function PostDetail() {
   const { postId } = useParams();
+  const [myUserId, setMyUserId] = useState();
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -13,7 +17,11 @@ export default function PostDetail() {
     async function fetchData() {
       const { data } = await getByPostId(postId);
       setPost(data);
-      setIsLoading(false);
+      if (Cookies.get('authorization')) {
+        const userId = await getMyUserId();
+        await setMyUserId(userId);
+      }
+      return await setIsLoading(false);
     }
 
     fetchData();
@@ -54,10 +62,12 @@ export default function PostDetail() {
         <div className="w-full max-w-3xl mx-auto">
           <div className="flex justify-between">
             <h1 className="text-4xl font-bold mt-6">{post.title}</h1>
-            <div className="flex gap-4 h-fit mt-4">
-              <Button text={'수정'} onClick={onClickUpdateBtn} />
-              <Button text={'삭제'} onClick={onClickDeleteBtn} />
-            </div>
+            {myUserId && (
+              <div className="flex gap-4 h-fit mt-4">
+                <Button text={'수정'} onClick={onClickUpdateBtn} />
+                <Button text={'삭제'} onClick={onClickDeleteBtn} />
+              </div>
+            )}
           </div>
           <div className="flex items-center mt-4 justify-between">
             <p className="text-lg font-bold px-2 my-4 max-w-fit text-slate-800">
@@ -65,10 +75,12 @@ export default function PostDetail() {
             </p>
             <p className="font-bold ml-2">{post.createdAt.substring(0, 10)}</p>
           </div>
-          <div className="w-60 border-2 border-gray-500 mt-4 mb-8 self-center" />
+          <div className="w-90 border-2 border-gray-500 mt-4 mb-8 self-center" />
           <p className="text-xl p-4 font-semibold">{post.content}</p>
-          {/* <MarkdownViewer content={post.content} />
-            <Comment id={post.id} /> */}
+          <div className="w-90 border-2 border-gray-500 mt-4 mb-8 self-center" />
+          <div className="w-[80%] mx-auto">
+            <Comment postId={postId} userId={myUserId} />
+          </div>
         </div>
       </section>
     );

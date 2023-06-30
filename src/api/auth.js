@@ -139,3 +139,30 @@ export const updateMyProfile = async newProfile => {
     // 에러 처리
   }
 };
+
+export const getMyUserId = async () => {
+  try {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    };
+    const response = await fetch(`${url}/api/user/me`, requestOptions);
+
+    if (response.ok) {
+      const { userId } = await response.json();
+      return userId;
+    } else {
+      if (response.status === 401) {
+        throw new Error('로그인된 사용자가 아닙니다.');
+      } else {
+        throw new Error('로그인에 실패했습니다.');
+      }
+    }
+  } catch (error) {
+    // console.error(error);
+    return '로그인된 사용자가 아닙니다.';
+  }
+};

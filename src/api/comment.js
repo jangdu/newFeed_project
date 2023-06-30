@@ -1,20 +1,23 @@
-const TOKEN = 'token';
 const url = process.env.REACT_APP_BASE_URL;
 
-export const loginUser = async (email, password) => {
+const requestOptions = {
+  method: 'GET', // HTTP 요청 메소드 (GET, POST 등)
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  credentials: 'include', // 쿠키 포함 설정
+};
+
+export const getAllComments = async postId => {
   try {
-    const response = await fetch(`${url}/api/user/sginin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await fetch(
+      `${url}/api/comments/${postId}`,
+      requestOptions
+    );
 
     if (response.ok) {
-      const { token } = await response.json();
-      localStorage.setItem(TOKEN, token);
-      window.location.reload();
+      const data = await response.json();
+      return await data.comment;
     } else {
       alert('로그인 실패');
       throw new Error('로그인에 실패했습니다.');
@@ -25,64 +28,70 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const signupUser = async (
-  nickname,
-  password,
-  confirm,
-  email,
-  emailConfirm,
-  comment,
-  imgUrl
-) => {
+export const createComment = async (postId, content) => {
   try {
-    const response = await fetch(`${url}/api/user/sginup`, {
-      method: 'POST',
+    const response = await fetch(`${url}/api/comments/${postId}`, {
+      method: 'POST', // HTTP 요청 메소드 (GET, POST 등)
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        nickname,
-        password,
-        confirm,
-        email,
-        emailConfirm,
-        comment,
-        imgUrl,
-      }),
+      credentials: 'include', // 쿠키 포함 설정
+      body: JSON.stringify({ content }),
     });
 
     const data = await response.json();
     if (response.ok) {
-      alert(data.message);
-      window.location.reload();
+      return '정상적으로 저장 되었습니다.';
     } else {
-      alert(data.errorMessage);
-      throw new Error('로그인에 실패했습니다.');
+      throw new Error(data.message);
     }
   } catch (error) {
-    console.error(error);
     // 에러 처리
+    return error;
   }
 };
 
-export const onclickEmailConfirmBtn = async email => {
+export const updateComment = async (newComment, commentId) => {
   try {
-    const response = await fetch(`${url}/api/user/email`, {
-      method: 'POST',
+    const response = await fetch(`${url}/api/comments/${commentId}`, {
+      method: 'PUT', // HTTP 요청 메소드 (GET, POST 등)
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
+      credentials: 'include', // 쿠키 포함 설정
+      body: JSON.stringify(newComment),
     });
+
     const data = await response.json();
-    console.log(data);
     if (response.ok) {
-      alert(data.message);
+      return '정상적으로 저장 되었습니다.';
     } else {
-      alert(data.errorMessage);
+      throw new Error(data.message);
     }
   } catch (error) {
-    console.error(error);
     // 에러 처리
+    return error;
+  }
+};
+
+export const removeComment = async commentId => {
+  try {
+    const response = await fetch(`${url}/api/comments/${commentId}`, {
+      method: 'DELETE', // HTTP 요청 메소드 (GET, POST 등)
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키 포함 설정
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      return '정상적으로 저장 되었습니다.';
+    } else {
+      throw new Error(data.message);
+    }
+  } catch (error) {
+    // 에러 처리
+    return error;
   }
 };
