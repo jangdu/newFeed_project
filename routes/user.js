@@ -40,7 +40,7 @@ router.post('/email', async (req, res) => {
       text: 'Hello world?', // plain text body
       html: `<h1>${authNum}</h1>`, // html body
     });
-    res.cookie('authorization', `Bearer ${authtoken}`);
+    res.cookie('emailToken', `Bearer ${authtoken}`);
     return res.status(201).json({ message: '인증 키가 발송되었습니다.' });
   } catch (error) {
     return res
@@ -59,8 +59,8 @@ router.post('/sginup', async (req, res) => {
   const salt = await bcrypt.genSalt(10); // 값이 높을 수록 암호화 연산이 증가. 하지만 암호화하는데 속도가 느려진다.
   const hash = await bcrypt.hash(password, salt); //bcrypt.hash에 인자로 암호화해줄 password와 salt를 인자로 넣어주면 끝이다.
   //-------------------------------------------------인증키--------------------------------------------------------------------
-  const { authorization } = req.cookies;
-  const [tokenType, authtoken] = authorization.split(' '); //토큰 타입은 bearer ,authtoken = authNum, secret_key
+  const { emailToken } = req.cookies;
+  const [tokenType, authtoken] = emailToken.split(' '); //토큰 타입은 bearer ,authtoken = authNum, secret_key
   const decodedToken = jwt.verify(authtoken, 'secret_key'); //jswt token 검증
   console.log(decodedToken.authNum); //이메일에 있는 authNum과 token값이 같다면 회원가입 진행 ---(입력칸이 필요함..)
 
