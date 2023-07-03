@@ -2,6 +2,8 @@
 
 ![](./main.png)
 
+> front : https://github.com/jangdu/newsFeed_front
+
 ## DB 설계
 
 ![](https://velog.velcdn.com/images/jangdu/post/d640735c-b010-4795-9758-e1dd4d30c4ec/image.png)
